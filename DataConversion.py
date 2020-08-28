@@ -1,10 +1,16 @@
+#Code to create data for the ESRI StoryMaps Shortlist from the working dataset
+
 import pandas as pd
 
-df = pd.read_csv('/Users/daveweimer/Desktop/WFH/BlackBoston/2020-08-18-Test2.csv',encoding='utf-8-sig')
+#import the csv data as a DataFrame
+df = pd.read_csv('2020-08-18-Test-data.csv',encoding='utf-8-sig')
 
+#These are the columns names that ESRI StoryMaps Shortlist requires
 template_columns = ['NAME','TAB_NAME','SHORT_DESC','DESC1','DESC2','DESC3','DESC4','DESC5','WEBSITE','PIC_URL','THUMB_URL','LAT','LONG']
 
 new_df = pd.DataFrame(columns=template_columns)
+
+#Project sources stored as dict rather than as a separate csv
 bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic Resource Study: Boston African American National Historic Site, 31 December 2002." Discover Underground Railroad History. National Parks Service.',
        'Wikipedia' : 'Wikipedia',
        'BOAF' : 'Boston African American National Historic Site',
@@ -19,10 +25,12 @@ bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic
        'Carretta' : 'Vincent Carretta, Phillis Wheatley: Biography of a Genius in Bondage. University of Georgia Press, 2011.',
        'CNA' : 'Colonial North American at Harvard Library'}
 
+#Make HTML formating for links
 def format_link(url, word, n):
-    l = '<a href=\\"' + str(url) + '\\">' + word + " " + str(n) + "</a><br>"
+    l = '<a href="' + str(url) + '">' + word + " " + str(n) + "</a><br>"
     return l
 
+#Check for empty cells and return the full name in correct order
 def get_name(l, f):
     if pd.isna(l):
         return str(f)
@@ -32,6 +40,7 @@ def get_name(l, f):
         else:
             return str(f) + ' ' + str(l)
 
+#Return a string of urls with with html breaks from a list of HOLLIS numbers separated by semi-colons
 def make_url(records):
     if pd.isna(records):
         return ""
@@ -42,7 +51,7 @@ def make_url(records):
         for mmsid in mmsids:
             if "; " in mmsid:
                 mmsid = mmsid.replace("; ", "")
-            urls.append('http://id.lib.harvard.edu/alma/' + str(mmsid) + '/catalog')
+            urls.append('https://id.lib.harvard.edu/alma/' + str(mmsid) + '/catalog')
         return_text = '<p>Records in HOLLIS include: '
         counter = 1
         for url in urls:
@@ -51,6 +60,7 @@ def make_url(records):
             return_text = return_text + l
         return return_text + "</p><br>"
 
+#Return a string of urls with with html breaks from a list of urls to digital objects separated by semi-colons
 def make_digs(records):
     if pd.isna(records):
         return ""
@@ -65,6 +75,7 @@ def make_digs(records):
             return_text = return_text + l
         return return_text + "</p><br>"
 
+#return a string with an html break from a list of source abbreviations separated by semi-colons
 def bib_entry(ids, bib):
     if pd.isna(ids):
         return ""
@@ -76,6 +87,7 @@ def bib_entry(ids, bib):
             return_text = return_text + str(bib[id]) + '. '
         return return_text + "</p><br>"
 
+#Return a string with html code for the notes entry
 def make_notes(records):
     if pd.isna(records):
         return ""
@@ -83,6 +95,7 @@ def make_notes(records):
         notes = "<p>Notes: " + str(records) + "</p><br>"
         return notes
 
+#Return a string for the date in html by checking the two location dates and adding English
 def get_date(s, e):
     if pd.isna(s) and pd.isna(e):
         return "No date available.<br>"
@@ -99,6 +112,7 @@ def get_date(s, e):
                 e = int(e)
                 return "from " + str(s) + ' to ' + str(e) + ".<br>"
 
+#Add data to the columns of the ESRI Template and make the SHORT_DEC field to be the test to appear nicely
 new_df['NAME'] = [get_name(x,y) for x, y in zip(df['Last_Name/Organization_Name/Title'], df['First_Names/Author'])]
 new_df['LAT'] = df['Lat']
 new_df['LONG'] = df['Long']
@@ -109,4 +123,5 @@ new_df['SHORT_DESC'] = [str(a) + " " + str(b) + " here " + get_date(c, d) + '\n'
                             df['Records_(semi-colon_separated)'], df['Digital_Assets_(semi-colon_separated)'],
                             df['Notes'],df['Source_(semi-colon_separated)'])]
 
-new_df.to_csv('/Users/daveweimer/Desktop/WFH/BlackBoston/2020-08-23-TestOutput-4.csv')
+#write a new csv to upload into ESRI
+new_df.to_csv('TestOutput_No_Escape.csv')
