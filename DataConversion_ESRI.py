@@ -26,8 +26,8 @@ bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic
        'CNA' : 'Colonial North American at Harvard Library'}
 
 #Make HTML formating for links
-def format_link(url, word, n):
-    l = '<a href="' + str(url) + '">' + word + " " + str(n) + "</a><br>"
+def format_link(url, phrase):
+    l = '<a href="' + str(url) + '">' + phrase + "</a><br>"
     return l
 
 #Check for empty cells and return the full name in correct order
@@ -40,24 +40,37 @@ def get_name(l, f):
         else:
             return str(f) + ' ' + str(l)
 
+def get_title(hollis):
+    xml_request = urllib.request.urlopen('http://api.lib.harvard.edu/v2/items?recordIdentifier=' + str(hollis))
+    full_xml = xmltodict.parse(xml_request)
+    try:
+        title = full_xml['results']['items']['mods:mods']['mods:titleInfo']['mods:title']
+    except TypeError:
+        title = full_xml['results']['items']['mods:mods']['mods:titleInfo'][0]['mods:title']
+    return str(title)
+
 #Return a string of urls with with html breaks from a list of HOLLIS numbers separated by semi-colons
 def make_url(records):
     if pd.isna(records):
         return ""
     else:
         records = str(records)
-        mmsids = records.split("; ")
-        urls = []
+        mmsids = records.split(";")
+        info = {}
         for mmsid in mmsids:
-            if "; " in mmsid:
-                mmsid = mmsid.replace("; ", "")
-            urls.append('https://id.lib.harvard.edu/alma/' + str(mmsid) + '/catalog')
-        return_text = '<p>Records in HOLLIS include: '
-        counter = 1
-        for url in urls:
-            l = format_link(url,"Record",counter)
-            counter += 1
-            return_text = return_text + l
+            if mmsid == "" or mmsid == " " or mmsid == ";":
+                mmsids.remove(mmsid)
+            else:
+                if ";" in mmsid:
+                    mmsid = mmsid.replace(";", "")
+                mmsid = mmsid.strip()
+                url = 'https://id.lib.harvard.edu/alma/' + str(mmsid) + '/catalog'
+                title = get_title(mmsid)
+                info[mmsid] = [url,title]
+                return_text = '<p>Records in HOLLIS include: '
+            for item in info.keys():
+                l = format_link(info[item][0], info[item][1])
+                return_text = return_text + l
         return return_text + "</p><br>"
 
 #Return a string of urls with with html breaks from a list of urls to digital objects separated by semi-colons
@@ -70,7 +83,7 @@ def make_digs(records):
         return_text = '<p>Digital objects include: '
         counter = 1
         for url in urls:
-            l = format_link(url, "Digital Object", counter)
+            l = format_link(url, "Digital Object" + str(counter))
             counter += 1
             return_text = return_text + l
         return return_text + "</p><br>"

@@ -1,7 +1,7 @@
 import pandas as pd
 
 #import the csv data as a DataFrame
-df = pd.read_csv('2020-08-18-Test-data.csv',encoding='utf-8-sig')
+df = pd.read_csv('DATA_20200918.csv',encoding='utf-8-sig')
 
 #Project sources stored as dict rather than as a separate csv
 bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic Resource Study: Boston African American National Historic Site, 31 December 2002." Discover Underground Railroad History. National Parks Service.',
@@ -18,4 +18,30 @@ bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic
        'Carretta' : 'Vincent Carretta, Phillis Wheatley: Biography of a Genius in Bondage. University of Georgia Press, 2011.',
        'CNA' : 'Colonial North American at Harvard Library'}
 
-print([*bib])
+#return a string with an html break from a list of source abbreviations separated by semi-colons
+def bib_entry(ids, bib):
+    if pd.isna(ids):
+        return ""
+    else:
+        ids = str(ids)
+        return_text = ''
+        if ";" in ids:
+            ids_list = ids.split(";")
+            for id in ids_list:
+                id = id.strip()
+                return_text = return_text + str(bib[id]) + '. '
+        else:
+            return_text = return_text + str(bib[ids]) + '. '
+        return return_text
+
+s_list = df['SOURCE'].tolist()
+o_list = []
+
+
+
+for s in s_list:
+    o_list.append(bib_entry(s,bib))
+
+df['SOURCE_PRETTY'] = o_list
+
+df.to_csv('20200918_SOURCES.csv')
