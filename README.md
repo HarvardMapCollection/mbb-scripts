@@ -1,2 +1,2 @@
 # DataCreation
- 
+This folder is working space for formatting and creating a geojson for the Mapping Black Boston project. The script DataConversion_Leaflet.py will take the data  from the csv downloaded from the Sharepoint folder and then add three pairs of columns for individual HOLLIS records and urls based on those stored in the RECORDS column. It will also format the sources from the abbreviations used in the csv based on a dictionary in the file. It has additional functions for formatting other links that may or may not be useful. It outputs a new csv and a geojson.

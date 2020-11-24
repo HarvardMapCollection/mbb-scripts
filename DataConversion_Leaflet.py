@@ -6,7 +6,7 @@ import xmltodict
 import geopandas
 
 # import the csv data as a DataFrame
-df = pd.read_csv('DATA_20200918.csv',encoding='utf-8-sig')
+df = pd.read_csv('DATA_20201124.csv',encoding='utf-8-sig')
 
 # Project sources stored as dict rather than as a separate csv
 bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic Resource Study: Boston African American National Historic Site, 31 December 2002." Discover Underground Railroad History. National Parks Service.',
@@ -74,9 +74,9 @@ def bib_entry(ids, bib):
             ids_list = ids.split(";")
             for id in ids_list:
                 id = id.strip()
-                return_text = return_text + str(bib[id])
+                return_text = return_text + str(bib[id]) + '. '
         else:
-            return_text = return_text + str(bib[ids])
+            return_text = return_text + str(bib[ids]) + '. '
         return return_text
 
 
@@ -134,8 +134,8 @@ df['TITLE_3'] = title_3
 df['URL_3'] = url_3
 
 # write a new csv
-df.to_csv('Leaflet_TestOutput.csv')
+df.to_csv('DATA_20201124_Output.csv', index=False)
 
 # write GeoJSON
 gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df['LONG'], df['LAT']))
-gdf.to_file("Leaflet_TestOutput.geojson", driver='GeoJSON')
+gdf.to_file("DATA_20201124_Output.geojson", driver='GeoJSON')
