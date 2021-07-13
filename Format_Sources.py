@@ -13,10 +13,10 @@ bib = {'Grover and da Silva' : 'Kathryn Grover and Janine V. da Silva, "Historic
        'AME Zion Church website' : 'Columbus Avenue AME Zion Church website',
        'Roses' : 'Lorraine Elena Roses, Black Bostonians and the Politics of Culture, 1920-1940. University of Massachusetts Press, 2017.',
        'Stimpson\'s Boston Directory, 1836' : 'Charles Stimpson, Jr. Stimpson\'s Boston Directory, 1836.',
-       'BADAA' : 'Boston Athenæum Directory of African Americans in Boston, 1820-1865 ',
+       'BADAA' : 'Boston Athenæum Directory of African Americans in Boston, 1820-1865.',
        'AAAB' : 'African Americans in Antebellum Boston',
        'Carretta' : 'Vincent Carretta, Phillis Wheatley: Biography of a Genius in Bondage. University of Georgia Press, 2011.',
-       'CNA' : 'Colonial North American at Harvard Library'}
+       'CNA' : 'Colonial North American at Harvard Library.'}
 
 #return a string with an html break from a list of source abbreviations separated by semi-colons
 def bib_entry(ids, bib):
@@ -29,9 +29,9 @@ def bib_entry(ids, bib):
             ids_list = ids.split(";")
             for id in ids_list:
                 id = id.strip()
-                return_text = return_text + str(bib[id]) + '. '
+                return_text = return_text + str(bib[id]) + ' '
         else:
-            return_text = return_text + str(bib[ids]) + '. '
+            return_text = return_text + str(bib[ids]) + ' '
         return return_text
 
 s_list = df['SOURCE'].tolist()

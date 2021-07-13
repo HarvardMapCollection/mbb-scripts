@@ -74,9 +74,9 @@ def bib_entry(ids, bib):
             ids_list = ids.split(";")
             for id in ids_list:
                 id = id.strip()
-                return_text = return_text + str(bib[id]) + '. '
+                return_text = return_text + str(bib[id]) + ' '
         else:
-            return_text = return_text + str(bib[ids]) + '. '
+            return_text = return_text + str(bib[ids]) + ' '
         return return_text
 
 
